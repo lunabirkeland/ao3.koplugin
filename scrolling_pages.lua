@@ -16,8 +16,6 @@ local VerticalSpan = require("ui/widget/verticalspan")
 local FrameContainer = require("ui/widget/container/framecontainer")
 local ScrollableContainer = require("ui/widget/container/scrollablecontainer")
 local FocusManager = require("ui/widget/focusmanager")
-local T = require("gettext")
-local logger = require("logger")
 
 local DGENERIC_ICON_SIZE = G_defaults:readSetting("DGENERIC_ICON_SIZE")
 
@@ -317,7 +315,7 @@ function ScrollingPages:toClose()
 	end
 end
 
-function ScrollingPages:onTap(arg, ges)
+function ScrollingPages:onTap(_arg, ges)
 	if self.focused and self.focused:isKeyboardVisible() then
 		if
 			self.focused.keyboard

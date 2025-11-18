@@ -17,7 +17,6 @@ local FrameContainer = require("ui/widget/container/framecontainer")
 local RightContainer = require("ui/widget/container/rightcontainer")
 local InputContainer = require("ui/widget/container/inputcontainer")
 local T = require("gettext")
-local logger = require("logger")
 local DownloadDialog = require("download_dialog")
 local DialogManager = require("dialog_manager")
 
@@ -214,7 +213,7 @@ function WorkResult:init()
 	}
 end
 
-function WorkResult:onTapSelectButton(arg, ges)
+function WorkResult:onTapSelectButton(_arg, _ges)
 	local dialog = DownloadDialog:new({
 		title = string.format("%s by %s", self.work.title, self.work.author),
 		id = self.work.id,

@@ -390,7 +390,7 @@ function SearchQuery:init()
 		left_icon_tap_callback = self.left_icon_tap_callback,
 		close_callback = self.close_callback,
 
-		content_generator = function(width, container, page)
+		content_generator = function(width, _container, _page)
 			local vertical_group = VerticalGroup:new({
 				align = "left",
 				width = width,

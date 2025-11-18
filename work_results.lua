@@ -1,14 +1,10 @@
-local Screen = require("device").screen
 local Blitbuffer = require("ffi/blitbuffer")
 local Size = require("ui/size")
 local Geom = require("ui/geometry")
-local UIManager = require("ui/uimanager")
 local LineWidget = require("ui/widget/linewidget")
 local VerticalGroup = require("ui/widget/verticalgroup")
 local VerticalSpan = require("ui/widget/verticalspan")
 local WidgetContainer = require("ui/widget/container/widgetcontainer")
-local logger = require("logger")
-local T = require("gettext")
 
 local WorkResult = require("work_result")
 local ScrollingPages = require("scrolling_pages")

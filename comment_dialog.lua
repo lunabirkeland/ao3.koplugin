@@ -11,7 +11,6 @@ local HorizontalGroup = require("ui/widget/horizontalgroup")
 local HorizontalSpan = require("ui/widget/horizontalspan")
 local FrameContainer = require("ui/widget/container/framecontainer")
 local WidgetContainer = require("ui/widget/container/widgetcontainer")
-local logger = require("logger")
 local T = require("gettext")
 local ScrollingPages = require("scrolling_pages")
 local Comment = require("comment")
@@ -59,7 +58,7 @@ function CommentDialog:init()
 			end
 		end,
 
-		content_generator = function(width, container, page)
+		content_generator = function(width, container, _page)
 			local vertical_group = VerticalGroup:new({
 				align = "left",
 				width = width,

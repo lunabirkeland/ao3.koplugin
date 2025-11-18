@@ -12,7 +12,6 @@ local HorizontalGroup = require("ui/widget/horizontalgroup")
 local WidgetContainer = require("ui/widget/container/widgetcontainer")
 local FrameContainer = require("ui/widget/container/framecontainer")
 local InputContainer = require("ui/widget/container/inputcontainer")
-local logger = require("logger")
 local T = require("gettext")
 local ScrollingPages = require("scrolling_pages")
 local Web = require("web")
@@ -57,7 +56,7 @@ function ChapterButton:init()
 	}
 end
 
-function ChapterButton:onTapSelectButton(args, ges)
+function ChapterButton:onTapSelectButton(_args, _ges)
 	if self.on_tap_callback then
 		self.on_tap_callback(self.chapter_id)
 	end
@@ -81,7 +80,7 @@ function ChapterPicker:init()
 			end
 		end,
 
-		content_generator = function(width, container, page)
+		content_generator = function(width, _container, _page)
 			local chapters = Web:getChapters(self.work_id)
 			local vertical_group = VerticalGroup:new({
 				align = "left",
@@ -92,7 +91,7 @@ function ChapterPicker:init()
 				self.single_chapter_callback(chapters[1].id)
 			end
 
-			for _, chapter in ipairs(chapters) do
+			for _, chapter in ipairs(chapters or {}) do
 				table.insert(
 					vertical_group,
 					ChapterButton:new({

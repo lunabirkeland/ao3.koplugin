@@ -195,14 +195,6 @@ function Web:search_works(query, page)
 		table.insert(works, work)
 	end
 
-	-- TODO: return details about other pages
-	-- local result = {
-	-- 	works = works,
-	-- 	query = query,
-	-- 	page = 1,
-	-- 	pages = 2,
-	-- 	total_works = 24,
-	-- }
 	return works, pages
 end
 
@@ -413,7 +405,7 @@ function Web:loadComments(work_id, chapter_id, page)
 			end
 			local datetime = heading[1]("> span.posted.datetime > *")
 			if not datetime then
-				logger.err(string.format("failed to get comment datetime with id: %s", id))
+				logger.err(string.format("failed to get comment datetime with id: %s", comment.id))
 			end
 			local tmp = {}
 			for _, node in ipairs(datetime) do
@@ -421,12 +413,12 @@ function Web:loadComments(work_id, chapter_id, page)
 			end
 			comment.datetime = table.concat(tmp, " ")
 		else
-			logger.err(string.format("failed to get comment heading with id: %s", id))
+			logger.err(string.format("failed to get comment heading with id: %s", comment.id))
 		end
 
 		local text_nodes = comment_html("> blockquote.userstuff > p")
 		if not text_nodes then
-			logger.err(string.format("failed to get comment text with id: %s", id))
+			logger.err(string.format("failed to get comment text with id: %s", comment.id))
 		end
 		local tmp = {}
 		for _, node in ipairs(text_nodes) do
@@ -492,7 +484,6 @@ function Web:loadComments(work_id, chapter_id, page)
 end
 
 function Web:sendComment(work_id, chapter_id, comment_id, name, email, content)
-	local t = {}
 	local url
 
 	if comment_id then
@@ -523,7 +514,7 @@ function Web:sendComment(work_id, chapter_id, comment_id, name, email, content)
 	data["authenticity_token"] = token
 
 	-- send comment
-	t = {}
+	local t = {}
 	local data_strings = {}
 	for key, value in pairs(data) do
 		table.insert(data_strings, string.format("%s=%s", self.sanitize_request(key), self.sanitize_request(value)))

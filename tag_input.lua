@@ -16,8 +16,6 @@ local VerticalSpan = require("ui/widget/verticalspan")
 local CenterContainer = require("ui/widget/container/centercontainer")
 local Web = require("web")
 local Screen = Device.screen
-local logger = require("logger")
-local T = require("gettext")
 
 local ScrollingPages = require("scrolling_pages")
 
@@ -77,7 +75,7 @@ function TagInput:init()
 		padding = 0,
 
 		mirror_scrollbar_gap = true,
-		content_generator = function(width, container, page)
+		content_generator = function(width, container, _page)
 			local icon_width = Screen:scaleBySize(DGENERIC_ICON_SIZE) / 2
 
 			self.input = InputText:new({

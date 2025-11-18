@@ -1,5 +1,4 @@
 local Screen = require("device").screen
-local Blitbuffer = require("ffi/blitbuffer")
 local Size = require("ui/size")
 local Font = require("ui/font")
 local GestureRange = require("ui/gesturerange")
@@ -10,10 +9,7 @@ local VerticalSpan = require("ui/widget/verticalspan")
 local HorizontalGroup = require("ui/widget/horizontalgroup")
 local HorizontalSpan = require("ui/widget/horizontalspan")
 local InputContainer = require("ui/widget/container/inputcontainer")
-local RightContainer = require("ui/widget/container/rightcontainer")
 local FrameContainer = require("ui/widget/container/framecontainer")
-local logger = require("logger")
-local T = require("gettext")
 
 local Comment = InputContainer:extend({
 	width = nil,
@@ -76,7 +72,7 @@ function Comment:init()
 	}
 end
 
-function Comment:onTapSelectButton(args, ges)
+function Comment:onTapSelectButton(_args, _ges)
 	if self.on_tap_callback then
 		self.on_tap_callback(self.comment_id)
 	end
