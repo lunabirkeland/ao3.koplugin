@@ -471,7 +471,7 @@ function SearchQuery:init()
 
 					for _, entry in pairs(field.options) do
 						local checked = false
-						for _, v in ipairs(default) do
+						for _, v in ipairs(default or {}) do
 							if v == entry.value then
 								checked = true
 							end
@@ -488,7 +488,7 @@ function SearchQuery:init()
 								value = entry.value,
 								callback = function()
 									local contains = nil
-									for i, value in ipairs(self._fields[field.key].value) do
+									for i, value in ipairs(self._fields[field.key].value or {}) do
 										if value == entry.value then
 											contains = i
 											break

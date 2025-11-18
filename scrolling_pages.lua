@@ -366,7 +366,7 @@ function ScrollingPages:scrollToFocused()
 			})
 			local top = 0
 			-- get closest step_scroll_grid offset
-			for _, offset in ipairs(self.scrollable_container.step_scroll_grid) do
+			for _, offset in ipairs(self.scrollable_container.step_scroll_grid or {}) do
 				if offset.top <= new_scrolled_offset.y then
 					top = offset.top
 				else

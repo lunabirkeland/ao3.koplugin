@@ -38,7 +38,7 @@ function WorkResults:init()
 				self.works = self.works_generator(page, container)
 			end
 
-			for _, work in ipairs(self.works) do
+			for _, work in ipairs(self.works or {}) do
 				local widget = WorkResult:new({
 					width = width,
 					work = work,

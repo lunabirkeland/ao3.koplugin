@@ -119,7 +119,7 @@ function TagInput:init()
 					end
 				end
 
-				for i, tag in ipairs(self.tags) do
+				for i, tag in ipairs(self.tags or {}) do
 					local close_button = IconButton:new({
 						icon = "close",
 
@@ -237,7 +237,7 @@ end
 
 function TagInput.tagsToString(tags)
 	local t = {}
-	for _, tag in ipairs(tags) do
+	for _, tag in ipairs(tags or {}) do
 		table.insert(t, tag.id)
 	end
 

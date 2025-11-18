@@ -106,14 +106,12 @@ function Comments:showComments()
 						}),
 					})
 				)
-				if comment.children then
-					for _, child in ipairs(comment.children) do
-						renderThread(child, depth + 1)
-					end
+				for _, child in ipairs(comment.children or {}) do
+					renderThread(child, depth + 1)
 				end
 			end
 
-			for _, thread in ipairs(comments.threads) do
+			for _, thread in ipairs(comments.threads or {}) do
 				renderThread(thread, 0)
 			end
 
