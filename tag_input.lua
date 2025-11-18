@@ -170,7 +170,7 @@ function TagInput:init()
 				)
 				addSeparator()
 
-				for _, suggestion in ipairs(suggestions) do
+				for _, suggestion in ipairs(suggestions or {}) do
 					local button = Button:new({
 						text = suggestion.name,
 						width = width,
