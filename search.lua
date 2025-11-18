@@ -12,6 +12,7 @@ local Search = FocusManager:extend({
 	query = {},
 	plugin_path = nil,
 	is_always_active = true,
+	close_callback = nil,
 })
 
 function Search:init()
@@ -43,7 +44,9 @@ function Search:showQuery()
 			self:showResults()
 		end,
 		close_callback = function()
-			UIManager:close(self)
+			if self.close_callback then
+				self.close_callback()
+			end
 		end,
 		query = self.query,
 		show_parent = self,
@@ -70,7 +73,9 @@ function Search:showResults()
 			self:showQuery()
 		end,
 		close_callback = function()
-			UIManager:close(self)
+			if self.close_callback then
+				self.close_callback()
+			end
 		end,
 		query = self.query,
 

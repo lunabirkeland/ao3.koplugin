@@ -16,7 +16,7 @@ local FrameContainer = require("ui/widget/container/framecontainer")
 local T = require("gettext")
 local logger = require("logger")
 local TagInput = require("tag_input")
-
+local DialogManager = require("dialog_manager")
 local ScrollingPages = require("scrolling_pages")
 
 local fields = {
@@ -523,7 +523,7 @@ function SearchQuery:init()
 									self._fields[field.key].value = { entry.value }
 									input:setText(entry.label, input_width)
 									UIManager:setDirty(input, "ui")
-									UIManager:close(self._fields[field.key].dialog)
+									DialogManager:close(self._fields[field.key].dialog)
 								end,
 							},
 						})
@@ -536,7 +536,7 @@ function SearchQuery:init()
 								title_align = "center",
 								width = input_width,
 							})
-							UIManager:show(self._fields[field.key].dialog)
+							DialogManager:show(self._fields[field.key].dialog)
 						end,
 						width = input_width,
 						padding = 0,
@@ -559,11 +559,11 @@ function SearchQuery:init()
 								local text = TagInput.tagsToString(dialog.tags)
 								self._fields[field.key].value = { text }
 								input:setText(text, input_width)
-								UIManager:close(dialog)
+								DialogManager:close(dialog)
 								UIManager:setDirty(input, "ui")
 								UIManager:setDirty(dialog, "ui")
 							end
-							UIManager:show(dialog)
+							DialogManager:show(dialog)
 						end,
 						width = input_width,
 						padding = 0,

@@ -18,6 +18,7 @@ local Comments = FocusManager:extend({
 	work_id = nil,
 	chapter_id = nil,
 	is_always_active = true,
+	close_callback = nil,
 })
 
 function Comments:init()
@@ -44,7 +45,9 @@ function Comments:showComments()
 	local scrolling_pages = ScrollingPages:new({
 		title = T("Comments"),
 		close_callback = function()
-			UIManager:close(self)
+			if self.close_callback then
+				self.close_callback()
+			end
 		end,
 
 		left_icon = "appbar.navigation",
@@ -143,7 +146,9 @@ function Comments:showChapters()
 			end)
 		end,
 		close_callback = function()
-			UIManager:close(self)
+			if self.close_callback then
+				self.close_callback()
+			end
 		end,
 	})
 

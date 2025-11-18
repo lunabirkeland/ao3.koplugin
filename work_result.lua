@@ -19,6 +19,7 @@ local InputContainer = require("ui/widget/container/inputcontainer")
 local T = require("gettext")
 local logger = require("logger")
 local DownloadDialog = require("download_dialog")
+local DialogManager = require("dialog_manager")
 
 local WorkResult = InputContainer:extend({
 	width = nil,
@@ -219,10 +220,10 @@ function WorkResult:onTapSelectButton(arg, ges)
 		id = self.work.id,
 	})
 	dialog.close_callback = function()
-		UIManager:close(dialog)
+		DialogManager:close(dialog)
 		UIManager:setDirty(self, "ui")
 	end
-	UIManager:show(dialog)
+	DialogManager:show(dialog)
 end
 
 return WorkResult

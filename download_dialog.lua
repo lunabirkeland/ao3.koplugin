@@ -17,6 +17,7 @@ local Web = require("web")
 local Screen = Device.screen
 local logger = require("logger")
 local T = require("gettext")
+local DialogManager = require("dialog_manager")
 
 local DownloadDialog = FocusManager:extend({
 	title = nil,
@@ -66,9 +67,12 @@ function DownloadDialog:showMainPage()
 						if self.close_callback then
 							self.close_callback()
 						end
+						DialogManager:closeAll()
 
 						if ReaderUI then
-							ReaderUI:showReader(filepath)
+							UIManager:tickAfterNext(function()
+								ReaderUI:showReader(filepath)
+							end)
 						else
 							logger.err("ReaderUI missing")
 						end
@@ -184,7 +188,9 @@ end
 
 function DownloadDialog:onTapClose(arg, ges)
 	if ges.pos:notIntersectWith(self.frame.dimen) then
-		UIManager:close(self)
+		if self.close_callback then
+			self.close_callback()
+		end
 	end
 	return true
 end

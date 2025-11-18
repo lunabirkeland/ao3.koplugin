@@ -1,16 +1,13 @@
 local InputContainer = require("ui/widget/container/inputcontainer")
-local UIManager = require("ui/uimanager")
 local ReaderUI = require("apps/reader/readerui")
 local logger = require("logger")
 local T = require("gettext")
 local Search = require("search")
 local util = require("util")
 local Web = require("web")
-local ScrollingPages = require("scrolling_pages")
 local Comments = require("comments")
-local CommentDialog = require("comment_dialog")
 local DownloadDialog = require("download_dialog")
-local TagInput = require("tag_input")
+local DialogManager = require("dialog_manager")
 
 logger.info("Loading AO3 plugin...")
 
@@ -88,7 +85,10 @@ function AO3:addToMainMenu(menu_items)
 							end
 
 							local dialog = Comments:new({ work_id = id })
-							UIManager:show(dialog)
+							dialog.close_callback = function()
+								DialogManager:close(dialog)
+							end
+							DialogManager:show(dialog)
 						end,
 					},
 					{
@@ -108,10 +108,9 @@ function AO3:addToMainMenu(menu_items)
 									id = id,
 								})
 								dialog.close_callback = function()
-									UIManager:close(dialog)
-									UIManager:setDirty(self, "ui")
+									DialogManager:close(dialog)
 								end
-								UIManager:show(dialog)
+								DialogManager:show(dialog)
 							end
 						end,
 					},
@@ -124,8 +123,11 @@ function AO3:addToMainMenu(menu_items)
 					local dialog = Search:new({
 						plugin_path = self.plugin_path,
 					})
+					dialog.close_callback = function()
+						DialogManager:close(dialog)
+					end
 
-					UIManager:show(dialog)
+					DialogManager:show(dialog)
 				end,
 			},
 		},
