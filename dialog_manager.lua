@@ -16,6 +16,16 @@ function DialogManager:show(dialog)
 	return dialog
 end
 
+function DialogManager:untrack(dialog)
+	for i, open_dialog in ipairs(self.open_dialogs) do
+		if open_dialog == dialog then
+			table.remove(self.open_dialogs, i)
+			return
+		end
+	end
+	logger.err("DialogManager: called untrack with untracked dialog")
+end
+
 function DialogManager:close(dialog)
 	for i, open_dialog in ipairs(self.open_dialogs) do
 		if open_dialog == dialog then
