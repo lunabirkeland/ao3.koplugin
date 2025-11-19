@@ -1,4 +1,6 @@
 local logger = require("logger")
+local T = require("gettext")
+local DialogManager = require("dialog_manager")
 
 local Cookies = {}
 
@@ -19,6 +21,7 @@ function Cookies:setCookies(cookies_string)
 		if key and value then
 			self[key] = value
 		else
+			DialogManager:showErr(string.format("%s\n%s", T("Failed to set Cookie"), cookie_string))
 			logger.err(string.format("error in Cookies:setCookie with string: %s", cookie_string))
 		end
 	end

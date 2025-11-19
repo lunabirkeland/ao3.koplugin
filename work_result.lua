@@ -223,6 +223,8 @@ function WorkResult:onTapSelectButton(_arg, _ges)
 		UIManager:setDirty(self, "ui")
 	end
 	DialogManager:show(dialog)
+
+	return true
 end
 
 return WorkResult

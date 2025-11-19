@@ -76,6 +76,8 @@ function Comment:onTapSelectButton(_args, _ges)
 	if self.on_tap_callback then
 		self.on_tap_callback(self.comment_id)
 	end
+
+	return true
 end
 
 return Comment

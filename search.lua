@@ -50,9 +50,6 @@ function Search:showQuery()
 		end,
 		query = self.query,
 		show_parent = self,
-		always_active_callback = function(always_active)
-			self.is_always_active = always_active
-		end,
 	})
 
 	self[1] = search_query

@@ -13,6 +13,7 @@ local Comment = require("comment")
 local ChapterPicker = require("chapter_picker")
 local CommentDialog = require("comment_dialog")
 local Web = require("web")
+local DialogManager = require("dialog_manager")
 
 local Comments = FocusManager:extend({
 	work_id = nil,
@@ -62,65 +63,76 @@ function Comments:showComments()
 		page = 1,
 
 		content_generator = function(width, container, page)
-			local comments = Web:loadComments(self.work_id, self.chapter_id, page)
-			if not comments then
-				logger.err("empty comments")
-				return
-			end
+			logger.info("show_info")
+			local close_info = DialogManager:showInfo(T("Fetching comments"))
+			UIManager:nextTick(function()
+				logger.info("next tick")
+				local comments = Web:loadComments(self.work_id, self.chapter_id, page)
+				UIManager:nextTick(close_info)
+				if not comments then
+					logger.err("empty comments")
+					DialogManager:showErr(T("Failed to get comments\nempty"))
+					return
+				end
 
-			container.page = comments.page
-			container.pages = comments.pages
+				container.page = comments.page
+				container.pages = comments.pages
 
-			local vertical_group = VerticalGroup:new({
-				align = "left",
+				local vertical_group = VerticalGroup:new({
+					align = "left",
+					width = width,
+				})
+
+				local function renderThread(comment, depth)
+					table.insert(
+						vertical_group,
+						Comment:new({
+							width = width,
+							depth = depth,
+							text = comment.text,
+							author = comment.author,
+							datetime = comment.datetime,
+							comment_id = comment.id,
+							on_tap_callback = function()
+								self:showCommentDialog(comment.id, comment.author, comment.datetime, comment.text)
+							end,
+						})
+					)
+					table.insert(
+						vertical_group,
+						VerticalGroup:new({
+							LineWidget:new({
+								background = Blitbuffer.COLOR_DARK_GRAY,
+								dimen = Geom:new({
+									w = width,
+									h = 2,
+								}),
+							}),
+							VerticalSpan:new({
+								width = Size.span.vertical_large,
+							}),
+						})
+					)
+					for _, child in ipairs(comment.children or {}) do
+						renderThread(child, depth + 1)
+					end
+				end
+
+				for _, thread in ipairs(comments.threads or {}) do
+					renderThread(thread, 0)
+				end
+
+				container:set_content(vertical_group)
+			end)
+			return VerticalGroup:new({
 				width = width,
 			})
-
-			local function renderThread(comment, depth)
-				table.insert(
-					vertical_group,
-					Comment:new({
-						width = width,
-						depth = depth,
-						text = comment.text,
-						author = comment.author,
-						datetime = comment.datetime,
-						comment_id = comment.id,
-						on_tap_callback = function()
-							self:showCommentDialog(comment.id, comment.author, comment.datetime, comment.text)
-						end,
-					})
-				)
-				table.insert(
-					vertical_group,
-					VerticalGroup:new({
-						LineWidget:new({
-							background = Blitbuffer.COLOR_DARK_GRAY,
-							dimen = Geom:new({
-								w = width,
-								h = 2,
-							}),
-						}),
-						VerticalSpan:new({
-							width = Size.span.vertical_large,
-						}),
-					})
-				)
-				for _, child in ipairs(comment.children or {}) do
-					renderThread(child, depth + 1)
-				end
-			end
-
-			for _, thread in ipairs(comments.threads or {}) do
-				renderThread(thread, 0)
-			end
-
-			return vertical_group
 		end,
 		show_parent = self,
 	})
 
 	self[1] = scrolling_pages
+	logger.info("set self")
 
 	UIManager:setDirty(self, "ui")
 end

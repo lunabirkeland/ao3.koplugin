@@ -2,6 +2,7 @@ local Blitbuffer = require("ffi/blitbuffer")
 local Size = require("ui/size")
 local Font = require("ui/font")
 local Geom = require("ui/geometry")
+local UIManager = require("ui/uimanager")
 local InputText = require("ui/widget/inputtext")
 local TextBoxWidget = require("ui/widget/textboxwidget")
 local LineWidget = require("ui/widget/linewidget")
@@ -15,6 +16,7 @@ local T = require("gettext")
 local ScrollingPages = require("scrolling_pages")
 local Comment = require("comment")
 local Web = require("web")
+local DialogManager = require("dialog_manager")
 
 local CommentDialog = WidgetContainer:extend({
 	work_id = nil,
@@ -44,17 +46,21 @@ function CommentDialog:init()
 				and self.email_input:getText():match(".*@.*%..*")
 				and self.comment_input:getText() ~= ""
 			then
-				Web:sendComment(
-					self.work_id,
-					self.chapter_id,
-					self.comment_id,
-					self.name_input:getText(),
-					self.email_input:getText(),
-					self.comment_input:getText()
-				)
-				if self.close_callback then
-					self.close_callback()
-				end
+				local close_info = DialogManager:showInfo(T("Sending comment"))
+				UIManager:nextTick(function()
+					Web:sendComment(
+						self.work_id,
+						self.chapter_id,
+						self.comment_id,
+						self.name_input:getText(),
+						self.email_input:getText(),
+						self.comment_input:getText()
+					)
+					UIManager:nextTick(close_info)
+					if self.close_callback then
+						self.close_callback()
+					end
+				end)
 			end
 		end,
 

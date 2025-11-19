@@ -2,6 +2,7 @@ local Blitbuffer = require("ffi/blitbuffer")
 local Size = require("ui/size")
 local Font = require("ui/font")
 local Geom = require("ui/geometry")
+local UIManager = require("ui/uimanager")
 local GestureRange = require("ui/gesturerange")
 local LineWidget = require("ui/widget/linewidget")
 local TextBoxWidget = require("ui/widget/textboxwidget")
@@ -15,6 +16,7 @@ local InputContainer = require("ui/widget/container/inputcontainer")
 local T = require("gettext")
 local ScrollingPages = require("scrolling_pages")
 local Web = require("web")
+local DialogManager = require("dialog_manager")
 
 local ChapterButton = InputContainer:extend({
 	width = nil,
@@ -60,6 +62,7 @@ function ChapterButton:onTapSelectButton(_args, _ges)
 	if self.on_tap_callback then
 		self.on_tap_callback(self.chapter_id)
 	end
+	return true
 end
 
 local ChapterPicker = WidgetContainer:extend({
@@ -80,47 +83,53 @@ function ChapterPicker:init()
 			end
 		end,
 
-		content_generator = function(width, _container, _page)
-			local chapters = Web:getChapters(self.work_id)
-			local vertical_group = VerticalGroup:new({
-				align = "left",
+		content_generator = function(width, container, _page)
+			local close_info = DialogManager:showInfo(T("Fetching chapters"))
+			UIManager:nextTick(function()
+				local chapters = Web:getChapters(self.work_id)
+				UIManager:nextTick(close_info)
+				local vertical_group = VerticalGroup:new({
+					align = "left",
+					width = width,
+				})
+
+				if chapters and #chapters == 1 and self.single_chapter_callback then
+					self.single_chapter_callback(chapters[1].id)
+				end
+
+				for _, chapter in ipairs(chapters or {}) do
+					table.insert(
+						vertical_group,
+						ChapterButton:new({
+							width = width,
+							name = chapter.name,
+							datetime = chapter.datetime,
+							chapter_id = chapter.id,
+							on_tap_callback = self.on_tap_callback,
+						})
+					)
+
+					table.insert(
+						vertical_group,
+						VerticalGroup:new({
+							LineWidget:new({
+								background = Blitbuffer.COLOR_DARK_GRAY,
+								dimen = Geom:new({
+									w = width,
+									h = 2,
+								}),
+							}),
+							VerticalSpan:new({
+								width = Size.span.vertical_large,
+							}),
+						})
+					)
+				end
+				container:set_content(vertical_group)
+			end)
+			return VerticalGroup:new({
 				width = width,
 			})
-
-			if #chapters == 1 and self.single_chapter_callback then
-				self.single_chapter_callback(chapters[1].id)
-			end
-
-			for _, chapter in ipairs(chapters or {}) do
-				table.insert(
-					vertical_group,
-					ChapterButton:new({
-						width = width,
-						name = chapter.name,
-						datetime = chapter.datetime,
-						chapter_id = chapter.id,
-						on_tap_callback = self.on_tap_callback,
-					})
-				)
-
-				table.insert(
-					vertical_group,
-					VerticalGroup:new({
-						LineWidget:new({
-							background = Blitbuffer.COLOR_DARK_GRAY,
-							dimen = Geom:new({
-								w = width,
-								h = 2,
-							}),
-						}),
-						VerticalSpan:new({
-							width = Size.span.vertical_large,
-						}),
-					})
-				)
-			end
-
-			return vertical_group
 		end,
 		show_parent = self.show_parent,
 	})

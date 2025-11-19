@@ -1,5 +1,6 @@
 local InputContainer = require("ui/widget/container/inputcontainer")
 local ReaderUI = require("apps/reader/readerui")
+local UIManager = require("ui/uimanager")
 local logger = require("logger")
 local T = require("gettext")
 local Search = require("search")
@@ -43,6 +44,7 @@ function AO3:addToMainMenu(menu_items)
 			file = ReaderUI.instance.document.file
 		else
 			logger.err("failed to get current file")
+			DialogManager:showErr(T("Failed to get current fic\nFic must be open"))
 			return
 		end
 
@@ -50,6 +52,7 @@ function AO3:addToMainMenu(menu_items)
 
 		if not (id and updated) then
 			logger.err("file name not of expected format")
+			DialogManager:showErr(T("Failed to get current fic\nFic must have been downloaded by this plugin"))
 			return nil
 		end
 
@@ -66,19 +69,23 @@ function AO3:addToMainMenu(menu_items)
 					{
 						text = T("Leave kudos"),
 						callback = function()
-							local result, id, updated = getCurrentFic()
+							local result, id, _updated = getCurrentFic()
 
 							if not result then
 								return
 							end
 
-							Web:giveKudos(id)
+							local close_info = DialogManager:showInfo(T("Leaving kudos"))
+							UIManager:nextTick(function()
+								Web:giveKudos(id)
+								UIManager:nextTick(close_info)
+							end)
 						end,
 					},
 					{
 						text = T("Comments"),
 						callback = function()
-							local result, id, updated = getCurrentFic()
+							local result, id, _updated = getCurrentFic()
 
 							if not result then
 								return
@@ -100,18 +107,24 @@ function AO3:addToMainMenu(menu_items)
 								return
 							end
 
-							local has_updates = Web:checkForFicUpdates(id, updated)
+							local close_info = DialogManager:showInfo(T("Checking for fic updates"))
+							UIManager:nextTick(function()
+								local has_updates = Web:checkForFicUpdates(id, updated)
+								UIManager:nextTick(close_info)
 
-							if has_updates then
-								local dialog = DownloadDialog:new({
-									title = T("Fic has updates"),
-									id = id,
-								})
-								dialog.close_callback = function()
-									DialogManager:close(dialog)
+								if has_updates then
+									local dialog = DownloadDialog:new({
+										title = T("Fic has updates"),
+										id = id,
+									})
+									dialog.close_callback = function()
+										DialogManager:close(dialog)
+									end
+									DialogManager:show(dialog)
+								else
+									DialogManager:showErr(T("Failed to get fic updates"))
 								end
-								DialogManager:show(dialog)
-							end
+							end)
 						end,
 					},
 				},

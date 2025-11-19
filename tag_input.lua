@@ -14,7 +14,9 @@ local HorizontalGroup = require("ui/widget/horizontalgroup")
 local VerticalGroup = require("ui/widget/verticalgroup")
 local VerticalSpan = require("ui/widget/verticalspan")
 local CenterContainer = require("ui/widget/container/centercontainer")
+local T = require("gettext")
 local Web = require("web")
+local DialogManager = require("dialog_manager")
 local Screen = Device.screen
 
 local ScrollingPages = require("scrolling_pages")
@@ -194,8 +196,12 @@ function TagInput:init()
 				local text = self.input.text
 				UIManager:scheduleIn(1, function()
 					if self and self.input and text == self.input.text and text ~= "" then
-						local suggestions = Web:autocomplete(self.type, text)
-						showSuggestions(suggestions)
+						local close_info = DialogManager:showInfo(T("Fetching suggested tags"))
+						UIManager:nextTick(function()
+							local suggestions = Web:autocomplete(self.type, text)
+							UIManager:nextTick(close_info)
+							showSuggestions(suggestions)
+						end)
 					end
 				end)
 			end
@@ -227,6 +233,8 @@ function TagInput:onTap(arg, ges)
 		self:toClose()
 		self.close_callback()
 	end
+
+	return true
 end
 
 function TagInput:onSwitchFocus(focus)

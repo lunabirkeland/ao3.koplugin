@@ -327,6 +327,8 @@ function ScrollingPages:onTap(_arg, ges)
 			self.focused:onCloseKeyboard()
 			self.focused = nil
 			self.scrollable_container._crop_h = self.inner_height
+
+			return true
 		end
 	end
 end
@@ -388,12 +390,17 @@ function ScrollingPages:updatePageDisplay()
 end
 
 function ScrollingPages:refresh_content()
-	if self.focused and self.focused:isKeyboardVisible() then
-		self.focused:onCloseKeyboard()
-	end
-
 	if self.content_generator then
 		self.content = self.content_generator(self.content_width, self, self.page)
+	end
+
+	self:set_content(self.content)
+end
+
+function ScrollingPages:set_content(content)
+	self.content = content
+	if self.focused and self.focused:isKeyboardVisible() then
+		self.focused:onCloseKeyboard()
 	end
 
 	self:updatePageDisplay()

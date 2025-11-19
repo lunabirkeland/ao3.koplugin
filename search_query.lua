@@ -380,7 +380,6 @@ local SearchQuery = WidgetContainer:extend({
 	title = nil,
 	left_icon = nil,
 	left_icon_tap_callback = nil,
-	always_active_callback = nil,
 })
 
 function SearchQuery:init()
@@ -526,9 +525,6 @@ function SearchQuery:init()
 									input:setText(entry.label, input_width)
 									UIManager:setDirty(input, "ui")
 									DialogManager:close(dialog)
-									if self.always_active_callback then
-										self.always_active_callback(true)
-									end
 								end,
 							},
 						})
@@ -543,14 +539,8 @@ function SearchQuery:init()
 							})
 							dialog.tap_close_callback = function()
 								DialogManager:untrack(dialog)
-								if self.always_active_callback then
-									self.always_active_callback(true)
-								end
 							end
 							DialogManager:show(dialog)
-							if self.always_active_callback then
-								self.always_active_callback(false)
-							end
 						end,
 						width = input_width,
 						padding = 0,
@@ -574,18 +564,11 @@ function SearchQuery:init()
 								self._fields[field.key].value = { text }
 								input:setText(text, input_width)
 								DialogManager:close(dialog)
-								UIManager:nextTick(function()
-									if self.always_active_callback then
-										self.always_active_callback(true)
-									end
-								end)
+								UIManager:nextTick(function() end)
 								UIManager:setDirty(input, "ui")
 								UIManager:setDirty(dialog, "ui")
 							end
 							DialogManager:show(dialog)
-							if self.always_active_callback then
-								self.always_active_callback(false)
-							end
 						end,
 						width = input_width,
 						padding = 0,

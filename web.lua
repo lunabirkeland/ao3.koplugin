@@ -637,7 +637,11 @@ end
 function Web:checkForFicUpdates(id, old_updated)
 	local _, _, _, updated = self:getDownloadDetails(id)
 
-	return updated > old_updated
+	if updated and old_updated then
+		return updated > old_updated
+	else
+		return nil
+	end
 end
 
 return Web

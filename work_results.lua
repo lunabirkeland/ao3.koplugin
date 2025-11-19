@@ -1,11 +1,13 @@
 local Blitbuffer = require("ffi/blitbuffer")
 local Size = require("ui/size")
 local Geom = require("ui/geometry")
+local UIManager = require("ui/uimanager")
 local LineWidget = require("ui/widget/linewidget")
 local VerticalGroup = require("ui/widget/verticalgroup")
 local VerticalSpan = require("ui/widget/verticalspan")
 local WidgetContainer = require("ui/widget/container/widgetcontainer")
-
+local T = require("gettext")
+local DialogManager = require("dialog_manager")
 local WorkResult = require("work_result")
 local ScrollingPages = require("scrolling_pages")
 
@@ -29,43 +31,51 @@ function WorkResults:init()
 		page = 1,
 
 		content_generator = function(width, container, page)
-			local vertical_group = VerticalGroup:new({
-				align = "left",
-				width = width,
-			})
+			local close_info = DialogManager:showInfo(T("Searching works"))
 
-			if self.works_generator then
-				self.works = self.works_generator(page, container)
-			end
-
-			for _, work in ipairs(self.works or {}) do
-				local widget = WorkResult:new({
+			UIManager:nextTick(function()
+				local vertical_group = VerticalGroup:new({
+					align = "left",
 					width = width,
-					work = work,
-					plugin_path = self.plugin_path,
-					parent = self.show_parent,
 				})
 
-				table.insert(vertical_group, widget)
+				if self.works_generator then
+					self.works = self.works_generator(page, container)
+				end
+				UIManager:nextTick(close_info)
 
-				table.insert(
-					vertical_group,
-					VerticalGroup:new({
-						LineWidget:new({
-							background = Blitbuffer.COLOR_DARK_GRAY,
-							dimen = Geom:new({
-								w = width,
-								h = 2,
-							}),
-						}),
-						VerticalSpan:new({
-							width = Size.span.vertical_large,
-						}),
+				for _, work in ipairs(self.works or {}) do
+					local widget = WorkResult:new({
+						width = width,
+						work = work,
+						plugin_path = self.plugin_path,
+						parent = self.show_parent,
 					})
-				)
-			end
 
-			return vertical_group
+					table.insert(vertical_group, widget)
+
+					table.insert(
+						vertical_group,
+						VerticalGroup:new({
+							LineWidget:new({
+								background = Blitbuffer.COLOR_DARK_GRAY,
+								dimen = Geom:new({
+									w = width,
+									h = 2,
+								}),
+							}),
+							VerticalSpan:new({
+								width = Size.span.vertical_large,
+							}),
+						})
+					)
+				end
+
+				container:set_content(vertical_group)
+			end)
+			return VerticalGroup:new({
+				width = width,
+			})
 		end,
 		show_parent = self.show_parent,
 	})

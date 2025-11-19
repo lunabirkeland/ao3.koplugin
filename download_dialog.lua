@@ -192,6 +192,7 @@ function DownloadDialog:onTapClose(arg, ges)
 			self.close_callback()
 		end
 	end
+
 	return true
 end
 
