@@ -382,7 +382,13 @@ function Web:loadComments(work_id, chapter_id, page)
 
 	local function parseComment(comment_html)
 		local comment = {}
-		comment.id = comment_html.attributes.id:match("comment_(%d+)")
+		if comment_html and comment_html.attributes and comment_html.attributes.id then
+			comment.id = comment_html.attributes.id:match("comment_(%d+)")
+		else
+			logger.err(
+				string.format("failed to get comment id from: %s", comment_html and comment_html:getcontent() or nil)
+			)
+		end
 
 		local heading = comment_html("> h4.heading")
 		if heading and heading[1] then
@@ -421,7 +427,7 @@ function Web:loadComments(work_id, chapter_id, page)
 			logger.err(string.format("failed to get comment text with id: %s", comment.id))
 		end
 		local tmp = {}
-		for _, node in ipairs(text_nodes) do
+		for _, node in ipairs(text_nodes or {}) do
 			table.insert(tmp, Web.sanitize_response(node:getcontent()))
 		end
 		comment.text = table.concat(tmp, "\n")

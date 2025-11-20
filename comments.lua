@@ -94,7 +94,9 @@ function Comments:showComments()
 							datetime = comment.datetime,
 							comment_id = comment.id,
 							on_tap_callback = function()
-								self:showCommentDialog(comment.id, comment.author, comment.datetime, comment.text)
+								if comment.id then
+									self:showCommentDialog(comment.id, comment.author, comment.datetime, comment.text)
+								end
 							end,
 						})
 					)
