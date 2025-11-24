@@ -4,11 +4,9 @@ local Geom = require("ui/geometry")
 local LineWidget = require("ui/widget/linewidget")
 local VerticalGroup = require("ui/widget/verticalgroup")
 local VerticalSpan = require("ui/widget/verticalspan")
-local TextWidget = require("ui/widget/textwidget")
 local Button = require("ui/widget/button")
 local WidgetContainer = require("ui/widget/container/widgetcontainer")
 local UIManager = require("ui/uimanager")
-local Font = require("ui/font")
 local logger = require("logger")
 local socketutil = require("socketutil")
 local https = require("ssl.https")
@@ -247,7 +245,7 @@ function Updates:init()
 		title = T("Updates"),
 		close_callback = function()
 			if self.close_callback then
-				self.close_callback()
+				self:close_callback()
 			end
 		end,
 
@@ -353,7 +351,7 @@ function Updates:init()
 					)
 				end
 
-				container:set_content(vertical_group)
+				container:setContent(vertical_group)
 			end)
 			return VerticalGroup:new({
 				width = width,

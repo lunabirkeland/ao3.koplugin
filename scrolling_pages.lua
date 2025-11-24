@@ -168,7 +168,7 @@ function ScrollingPages:init()
 					if self.page_turn_callback then
 						self.page_turn_callback(self.page)
 					end
-					self:refresh_content()
+					self:refreshContent()
 				end,
 				allow_flash = true,
 				show_parent = self.show_parent,
@@ -189,7 +189,7 @@ function ScrollingPages:init()
 					if self.page_turn_callback then
 						self.page_turn_callback(self.page)
 					end
-					self:refresh_content()
+					self:refreshContent()
 				end,
 				allow_flash = true,
 				show_parent = self.show_parent,
@@ -389,15 +389,15 @@ function ScrollingPages:updatePageDisplay()
 	end
 end
 
-function ScrollingPages:refresh_content()
+function ScrollingPages:refreshContent()
 	if self.content_generator then
 		self.content = self.content_generator(self.content_width, self, self.page)
 	end
 
-	self:set_content(self.content)
+	self:setContent(self.content)
 end
 
-function ScrollingPages:set_content(content)
+function ScrollingPages:setContent(content)
 	self.content = content
 	if self.focused and self.focused:isKeyboardVisible() then
 		self.focused:onCloseKeyboard()

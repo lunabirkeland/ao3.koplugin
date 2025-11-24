@@ -122,7 +122,7 @@ function Comments:showComments()
 					renderThread(thread, 0)
 				end
 
-				container:set_content(vertical_group)
+				container:setContent(vertical_group)
 			end)
 			return VerticalGroup:new({
 				width = width,

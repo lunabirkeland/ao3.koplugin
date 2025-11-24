@@ -80,7 +80,7 @@ function Search:showResults()
 		query = self.query,
 
 		works_generator = function(page, parent)
-			local works, pages = Web:search_works(self.query, page)
+			local works, pages = Web:searchWorks(self.query, page)
 			parent.pages = pages
 
 			return works

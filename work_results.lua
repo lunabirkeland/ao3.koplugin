@@ -71,7 +71,7 @@ function WorkResults:init()
 					)
 				end
 
-				container:set_content(vertical_group)
+				container:setContent(vertical_group)
 			end)
 			return VerticalGroup:new({
 				width = width,

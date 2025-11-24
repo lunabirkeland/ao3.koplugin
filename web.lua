@@ -37,7 +37,7 @@ function Web:new(o)
 	return o
 end
 
-function Web.sanitize_response(text)
+function Web.sanitizeResponse(text)
 	local result = text:gsub("&#39;", "'")
 		:gsub("&lt;", "<")
 		:gsub("&gt;", ">")
@@ -48,7 +48,7 @@ function Web.sanitize_response(text)
 	return result
 end
 
-function Web.sanitize_request(text)
+function Web.sanitizeRequest(text)
 	if type(text) ~= "string" then
 		text = string.format("%s", text)
 	end
@@ -67,7 +67,7 @@ function Web.sanitize_request(text)
 	return result:gsub(" ", "+")
 end
 
-function Web:search_works(query, page)
+function Web:searchWorks(query, page)
 	local t = {}
 
 	local url = { "https://archiveofourown.org/works/search?commit=Search" }
@@ -82,7 +82,7 @@ function Web:search_works(query, page)
 			if key == "category_ids" or key == "archive_warning_ids" then
 				extra = "%5B%5D"
 			end
-			local parameter = string.format("work_search%%5B%s%%5D%s=%s", key, extra, Web.sanitize_request(value))
+			local parameter = string.format("work_search%%5B%s%%5D%s=%s", key, extra, Web.sanitizeRequest(value))
 			table.insert(url, parameter)
 		end
 	end
@@ -119,9 +119,9 @@ function Web:search_works(query, page)
 		local heading = e("h4.heading > a")
 		for _, e2 in ipairs(heading) do
 			if e2.attributes.href:find("^/works/") then
-				work.title = Web.sanitize_response(e2:getcontent())
+				work.title = Web.sanitizeResponse(e2:getcontent())
 			elseif e2.attributes.rel == "author" then
-				work.author = Web.sanitize_response(e2:getcontent())
+				work.author = Web.sanitizeResponse(e2:getcontent())
 			end
 		end
 		work.author = work.author or "Anonymous"
@@ -129,7 +129,7 @@ function Web:search_works(query, page)
 		local fandoms = e("h5.fandoms.heading > a")
 		work.fandoms = {}
 		for _, e2 in ipairs(fandoms) do
-			table.insert(work.fandoms, Web.sanitize_response(e2:getcontent()))
+			table.insert(work.fandoms, Web.sanitizeResponse(e2:getcontent()))
 		end
 
 		local required_tags = e("ul.required-tags")[1]
@@ -153,12 +153,12 @@ function Web:search_works(query, page)
 		end
 
 		local datetime = e("p.datetime")[1]
-		work.datetime = datetime and Web.sanitize_response(datetime:getcontent()) or ""
+		work.datetime = datetime and Web.sanitizeResponse(datetime:getcontent()) or ""
 
 		local tags = e("ul.tags.commas > li a")
 		work.tags = {}
 		for _, e2 in ipairs(tags) do
-			local content = Web.sanitize_response(Web.sanitize_response(e2:getcontent()))
+			local content = Web.sanitizeResponse(Web.sanitizeResponse(e2:getcontent()))
 			-- TODO: bold archive warnings
 			table.insert(work.tags, content)
 		end
@@ -167,7 +167,7 @@ function Web:search_works(query, page)
 		work.summary = {}
 
 		for _, e2 in ipairs(summary) do
-			local content = Web.sanitize_response(e2:getcontent())
+			local content = Web.sanitizeResponse(e2:getcontent())
 			table.insert(work.summary, content)
 		end
 		work.summary = table.concat(work.summary, "\n")
@@ -176,21 +176,21 @@ function Web:search_works(query, page)
 		work.stats = {}
 		if stats then
 			local language = stats("dd.language")[1]
-			work.stats.language = language and Web.sanitize_response(language:getcontent()) or nil
+			work.stats.language = language and Web.sanitizeResponse(language:getcontent()) or nil
 			local words = stats("dd.words")[1]
-			work.stats.words = words and Web.sanitize_response(words:getcontent()) or nil
+			work.stats.words = words and Web.sanitizeResponse(words:getcontent()) or nil
 			local chapters = stats("dd.chapters")[1]
-			work.stats.chapters = chapters and Web.sanitize_response(chapters:getcontent()) or nil
+			work.stats.chapters = chapters and Web.sanitizeResponse(chapters:getcontent()) or nil
 			local collections = stats("dd.collections > a")[1]
-			work.stats.collections = collections and Web.sanitize_response(collections:getcontent()) or nil
+			work.stats.collections = collections and Web.sanitizeResponse(collections:getcontent()) or nil
 			local comments = stats("dd.comments > a")[1]
-			work.stats.comments = comments and Web.sanitize_response(comments:getcontent()) or nil
+			work.stats.comments = comments and Web.sanitizeResponse(comments:getcontent()) or nil
 			local kudos = stats("dd.kudos > a")[1]
-			work.stats.kudos = kudos and Web.sanitize_response(kudos:getcontent()) or nil
+			work.stats.kudos = kudos and Web.sanitizeResponse(kudos:getcontent()) or nil
 			local bookmarks = stats("dd.bookmarks > a")[1]
-			work.stats.bookmarks = bookmarks and Web.sanitize_response(bookmarks:getcontent()) or nil
+			work.stats.bookmarks = bookmarks and Web.sanitizeResponse(bookmarks:getcontent()) or nil
 			local hits = stats("dd.hits")[1]
-			work.stats.hits = hits and Web.sanitize_response(hits:getcontent()) or nil
+			work.stats.hits = hits and Web.sanitizeResponse(hits:getcontent()) or nil
 		end
 
 		table.insert(works, work)
@@ -201,7 +201,7 @@ end
 
 function Web:autocomplete(type, value)
 	local t = {}
-	local url = "https://archiveofourown.org/autocomplete/" .. type .. "?term=" .. Web.sanitize_request(value or "")
+	local url = "https://archiveofourown.org/autocomplete/" .. type .. "?term=" .. Web.sanitizeRequest(value or "")
 
 	self:httpsRequest({
 		method = "GET",
@@ -319,7 +319,7 @@ function Web:giveKudos(id)
 
 	for _, input in ipairs(kudo_form_inputs) do
 		if input.attributes.name and input.attributes.type == "hidden" then
-			data[Web.sanitize_request(input.attributes.name)] = Web.sanitize_request(input.attributes.value)
+			data[Web.sanitizeRequest(input.attributes.name)] = Web.sanitizeRequest(input.attributes.value)
 		end
 	end
 
@@ -429,7 +429,7 @@ function Web:loadComments(work_id, chapter_id, page)
 		end
 		local tmp = {}
 		for _, node in ipairs(text_nodes or {}) do
-			table.insert(tmp, Web.sanitize_response(node:getcontent()))
+			table.insert(tmp, Web.sanitizeResponse(node:getcontent()))
 		end
 		comment.text = table.concat(tmp, "\n")
 
@@ -524,7 +524,7 @@ function Web:sendComment(work_id, chapter_id, comment_id, name, email, content)
 	local t = {}
 	local data_strings = {}
 	for key, value in pairs(data) do
-		table.insert(data_strings, string.format("%s=%s", self.sanitize_request(key), self.sanitize_request(value)))
+		table.insert(data_strings, string.format("%s=%s", self.sanitizeRequest(key), self.sanitizeRequest(value)))
 	end
 	local data_string = table.concat(data_strings, "&")
 	self:httpsRequest({
