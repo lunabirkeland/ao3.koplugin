@@ -122,7 +122,7 @@ function AO3:addToMainMenu(menu_items)
 										DialogManager:close(dialog)
 									end
 									DialogManager:show(dialog)
-								else
+								elseif has_updates == nil then
 									DialogManager:showErr(T("Failed to get fic updates"))
 								end
 							end)

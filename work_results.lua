@@ -61,7 +61,7 @@ function WorkResults:init()
 								background = Blitbuffer.COLOR_DARK_GRAY,
 								dimen = Geom:new({
 									w = width,
-									h = 2,
+									h = Size.line.thick,
 								}),
 							}),
 							VerticalSpan:new({

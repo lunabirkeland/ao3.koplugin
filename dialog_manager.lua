@@ -69,19 +69,18 @@ function DialogManager:showInfo(text)
 				return
 			end
 		end
-		logger.err("attempt to close an already closed popup with text: %s", text)
 	end
 
-	local info_popup = InfoMessage:new({
+	local info_message = InfoMessage:new({
 		text = text,
 		show_icon = false,
 		dismissable = true,
 		dismiss_callback = close_fn,
 	})
 
-	table.insert(self.info_messages, { id = id, widget = info_popup })
+	table.insert(self.info_messages, { id = id, widget = info_message })
 
-	UIManager:show(info_popup)
+	UIManager:show(info_message)
 
 	return close_fn
 end

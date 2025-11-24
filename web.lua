@@ -11,6 +11,7 @@ local Web = {
 	filetype = "epub",
 	download_dir = nil,
 	cookies = nil,
+	user_agent = "ao3.koreader",
 }
 
 function Web:init()
@@ -617,6 +618,7 @@ function Web:httpsRequest(opts)
 		opts.headers = {}
 	end
 	opts.headers["Cookie"] = self.cookies:getCookieString()
+	opts.headers["User-Agent"] = self.user_agent
 
 	logger.dbg(string.format("https request"))
 	logger.dbg(opts)
@@ -627,6 +629,7 @@ function Web:httpsRequest(opts)
 	end
 end
 
+-- returns highest page in pagination or nil if none found
 function Web.getPages(pagination_html)
 	local nodes = pagination_html("> li > *")
 	local pages = 0
@@ -643,9 +646,13 @@ end
 function Web:checkForFicUpdates(id, old_updated)
 	local _, _, _, updated = self:getDownloadDetails(id)
 
-	if updated and old_updated then
+	local local_updated = tonumber(old_updated)
+	local remote_updated = tonumber(updated)
+
+	if local_updated and remote_updated then
 		return updated > old_updated
 	else
+		logger.err("failed to get number from updated: %s or %s", local_updated, remote_updated)
 		return nil
 	end
 end

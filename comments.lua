@@ -63,10 +63,8 @@ function Comments:showComments()
 		page = 1,
 
 		content_generator = function(width, container, page)
-			logger.info("show_info")
 			local close_info = DialogManager:showInfo(T("Fetching comments"))
 			UIManager:nextTick(function()
-				logger.info("next tick")
 				local comments = Web:loadComments(self.work_id, self.chapter_id, page)
 				UIManager:nextTick(close_info)
 				if not comments then
@@ -134,7 +132,6 @@ function Comments:showComments()
 	})
 
 	self[1] = scrolling_pages
-	logger.info("set self")
 
 	UIManager:setDirty(self, "ui")
 end
