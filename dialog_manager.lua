@@ -19,16 +19,6 @@ function DialogManager:show(dialog)
 	return dialog
 end
 
-function DialogManager:untrack(dialog)
-	for i, open_dialog in ipairs(self.open_dialogs) do
-		if open_dialog == dialog then
-			table.remove(self.open_dialogs, i)
-			return
-		end
-	end
-	logger.err("DialogManager: called untrack with untracked dialog")
-end
-
 function DialogManager:close(dialog)
 	for i, open_dialog in ipairs(self.open_dialogs) do
 		if open_dialog == dialog then
@@ -40,6 +30,7 @@ function DialogManager:close(dialog)
 
 	logger.err("DialogManager: closing untracked dialog")
 	UIManager:close(dialog)
+	UIManager:setDirty(dialog, "ui")
 end
 
 function DialogManager:closeAll()
@@ -54,6 +45,8 @@ function DialogManager:closeAll()
 	end
 
 	self.info_messages = {}
+
+	UIManager:setDirty("all", "ui")
 end
 
 function DialogManager:showInfo(text)
@@ -63,6 +56,7 @@ function DialogManager:showInfo(text)
 			if popup.id == id then
 				table.remove(self.info_messages, i)
 				UIManager:close(popup.widget)
+				UIManager:setDirty("all", "ui")
 				if self.info_messages and self.info_messages[1] then
 					UIManager:show(self.info_messages[1].widget)
 				end

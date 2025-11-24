@@ -538,7 +538,7 @@ function SearchQuery:init()
 								width = input_width,
 							})
 							dialog.tap_close_callback = function()
-								DialogManager:untrack(dialog)
+								DialogManager:close(dialog)
 							end
 							DialogManager:show(dialog)
 						end,
