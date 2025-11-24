@@ -1,11 +1,11 @@
 local UIManager = require("ui/uimanager")
+local InfoMessage = require("ui/widget/infomessage")
 local random = require("random")
 local logger = require("logger")
-local InfoPopup = require("info_popup")
 
 local DialogManager = {
 	open_dialogs = {},
-	info_popups = {},
+	info_messages = {},
 }
 
 function DialogManager:show(dialog)
@@ -49,22 +49,22 @@ function DialogManager:closeAll()
 
 	self.open_dialogs = {}
 
-	for _, info_popup in ipairs(self.info_popups) do
-		UIManager:close(info_popup)
+	for _, info_message in ipairs(self.info_messages) do
+		UIManager:close(info_message)
 	end
 
-	self.info_popups = {}
+	self.info_messages = {}
 end
 
 function DialogManager:showInfo(text)
 	local id = random.uuid()
 	local close_fn = function()
-		for i, popup in ipairs(self.info_popups) do
+		for i, popup in ipairs(self.info_messages) do
 			if popup.id == id then
-				table.remove(self.info_popups, i)
+				table.remove(self.info_messages, i)
 				UIManager:close(popup.widget)
-				if self.info_popups and self.info_popups[1] then
-					UIManager:show(self.info_popups[1].widget)
+				if self.info_messages and self.info_messages[1] then
+					UIManager:show(self.info_messages[1].widget)
 				end
 				return
 			end
@@ -72,12 +72,14 @@ function DialogManager:showInfo(text)
 		logger.err("attempt to close an already closed popup with text: %s", text)
 	end
 
-	local info_popup = InfoPopup:new({
+	local info_popup = InfoMessage:new({
 		text = text,
-		tap_close_callback = close_fn,
+		show_icon = false,
+		dismissable = true,
+		dismiss_callback = close_fn,
 	})
 
-	table.insert(self.info_popups, { id = id, widget = info_popup })
+	table.insert(self.info_messages, { id = id, widget = info_popup })
 
 	UIManager:show(info_popup)
 
