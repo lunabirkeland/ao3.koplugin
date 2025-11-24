@@ -9,6 +9,7 @@ local Web = require("web")
 local Comments = require("comments")
 local DownloadDialog = require("download_dialog")
 local DialogManager = require("dialog_manager")
+local Updates = require("updates")
 
 logger.info("Loading AO3 plugin...")
 
@@ -134,6 +135,19 @@ function AO3:addToMainMenu(menu_items)
 
 				callback = function()
 					local dialog = Search:new({
+						plugin_path = self.plugin_path,
+					})
+					dialog.close_callback = function()
+						DialogManager:close(dialog)
+					end
+
+					DialogManager:show(dialog)
+				end,
+			},
+			{
+				text = T("Check for updates"),
+				callback = function()
+					local dialog = Updates:new({
 						plugin_path = self.plugin_path,
 					})
 					dialog.close_callback = function()
